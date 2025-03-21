@@ -28,7 +28,7 @@ const config = {
   /** JWT configuration */
   jwt: {
     /** JWT secret for API authentication */
-    secret: process.env.JWT_SECRET || "default_secret_dont_use_in_production",
+    secret: process.env.JWT_SECRET || "default_secret_don't_use_in_production",
   },
 };
 

@@ -19,7 +19,7 @@ class ZoomService {
   /**
    * Base URL for Zoom API
    */
-  private baseUrl = "https://api.zoom.us/v2";
+  private readonly baseUrl = "https://api.zoom.us/v2";
   
   /**
    * Generate access token for Zoom API authentication
@@ -37,7 +37,7 @@ class ZoomService {
             account_id: config.zoom.accountId,
           },
           headers: {
-            Authorization: `Basic ${Buffer.from(`${config.zoom.clientId}:${config.zoom.clientSecret}`).toString("base64")}`,
+            Authorization: `Basic ${Buffer.from(config.zoom.clientId + ":" + config.zoom.clientSecret).toString("base64")}`,
             "Content-Type": "application/json",
           },
         }
@@ -198,7 +198,7 @@ class ZoomService {
             // Registration failed
             result.registrants.push({
               result: null,
-              error: response.error || "Unknown error",
+              error: response.error ?? "Unknown error",
               email: registrant.email
             });
             result.failed_count++;
@@ -282,7 +282,7 @@ class ZoomService {
             // Registration failed
             result.registrants.push({
               result: null,
-              error: response.error || "Unknown error",
+              error: response.error ?? "Unknown error",
               email: registrant.email
             });
             result.failed_count++;

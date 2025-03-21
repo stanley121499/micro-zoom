@@ -229,4 +229,36 @@ micro-zoom/
 
 ## License
 
-[MIT](LICENSE) 
+[MIT](LICENSE)
+
+## Testing
+
+This project includes comprehensive unit and integration tests to ensure reliability of the API. The test suite is built with Jest and tests the following components:
+
+- **Service Tests**: Tests for the Zoom service methods that interact with the Zoom API
+- **Controller Tests**: Tests for the controller layer that handles HTTP requests and responses
+- **Route Tests**: Integration tests for the API endpoints
+- **Authentication Tests**: Tests for the token generation and authentication process
+
+### Running Tests
+
+To run the tests:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests in watch mode (for development)
+npm run test:watch
+```
+
+### GitHub Actions
+
+This project uses GitHub Actions to automatically run tests on push to main branch and on pull requests. The workflow configuration is in `.github/workflows/tests.yml`.
+
+## Deployment
+
+// ... existing code ... 
