@@ -30,11 +30,28 @@ const config = {
     /** JWT secret for API authentication */
     secret: process.env.JWT_SECRET || "default_secret_don't_use_in_production",
   },
+
+  /** Google Sheets configuration */
+  googleSheets: {
+    /** Google Sheets service account email */
+    clientEmail: process.env.GOOGLE_SHEETS_CLIENT_EMAIL || "",
+    /** Google Sheets service account private key */
+    privateKey: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, "\n") || "",
+    /** Google Sheets spreadsheet ID */
+    spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID || "",
+  },
 };
 
 // Validate required environment variables are set
 const validateConfig = () => {
-  const requiredEnvVars = ["ZOOM_CLIENT_ID", "ZOOM_CLIENT_SECRET", "ZOOM_ACCOUNT_ID"];
+  const requiredEnvVars = [
+    "ZOOM_CLIENT_ID",
+    "ZOOM_CLIENT_SECRET",
+    "ZOOM_ACCOUNT_ID",
+    "GOOGLE_SHEETS_CLIENT_EMAIL",
+    "GOOGLE_SHEETS_PRIVATE_KEY",
+    "GOOGLE_SHEETS_SPREADSHEET_ID",
+  ];
   
   for (const envVar of requiredEnvVars) {
     if (!process.env[envVar]) {

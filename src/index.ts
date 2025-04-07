@@ -7,6 +7,8 @@ import swaggerUi from "swagger-ui-express";
 import config from "./config/config";
 import swaggerSpec from "./config/swagger";
 import zoomRoutes from "./routes/zoomRoutes";
+import { createGoogleSheetsRoutes } from "./routes/googleSheetsRoutes";
+import { GoogleSheetsService } from "./services/googleSheetsService";
 
 /**
  * Express application instance
@@ -27,6 +29,15 @@ app.use(cors());
  * Swagger documentation setup
  */
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * Initialize Google Sheets service
+ */
+const sheetsService = new GoogleSheetsService({
+  clientEmail: config.googleSheets.clientEmail,
+  privateKey: config.googleSheets.privateKey,
+  spreadsheetId: config.googleSheets.spreadsheetId,
+});
 
 /**
  * @swagger
@@ -55,6 +66,7 @@ app.get("/health", (req: Request, res: Response) => {
  * API routes
  */
 app.use("/api/zoom", zoomRoutes);
+app.use("/api/sheets", createGoogleSheetsRoutes(sheetsService));
 
 /**
  * Error handling middleware
