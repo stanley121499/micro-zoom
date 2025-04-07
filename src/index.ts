@@ -21,9 +21,19 @@ const app = express();
 app.use(express.json());
 
 /**
- * Middleware for enabling CORS
+ * CORS configuration
  */
-app.use(cors());
+const corsOptions = {
+  origin: true, // This will reflect the request origin
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+/**
+ * Middleware for enabling CORS with specific configuration
+ */
+app.use(cors(corsOptions));
 
 /**
  * Swagger documentation setup
