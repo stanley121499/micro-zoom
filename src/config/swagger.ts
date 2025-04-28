@@ -12,7 +12,7 @@ const options: swaggerJsdoc.Options = {
     info: {
       title: "Zoom Registration API",
       version: "1.0.0",
-      description: "API for registering participants to Zoom meetings and webinars",
+      description: "API for registering participants to Zoom meetings and webinars with support for multiple Zoom accounts",
       contact: {
         name: "API Support",
         email: "support@example.com",
@@ -81,6 +81,7 @@ const options: swaggerJsdoc.Options = {
             },
             custom_questions: {
               type: "array",
+              description: "Custom questions and responses",
               items: {
                 type: "object",
                 properties: {
@@ -113,56 +114,45 @@ const options: swaggerJsdoc.Options = {
         RegistrationResponse: {
           type: "object",
           properties: {
-            success: {
-              type: "boolean",
-              description: "Indicates if the registration was successful",
-            },
-            data: {
-              type: "object",
-              properties: {
-                id: {
-                  type: "string",
-                  description: "ID of the registrant",
-                },
-                meeting_id: {
-                  type: "string",
-                  description: "ID of the meeting",
-                },
-                topic: {
-                  type: "string",
-                  description: "Topic of the meeting",
-                },
-                create_time: {
-                  type: "string",
-                  format: "date-time",
-                  description: "Time when registration occurred",
-                },
-                status: {
-                  type: "string",
-                  enum: ["approved", "pending", "denied"],
-                  description: "Status of the registration",
-                },
-                join_url: {
-                  type: "string",
-                  description: "URL for joining the meeting",
-                },
-                email: {
-                  type: "string",
-                  description: "Email of the registrant",
-                },
-                first_name: {
-                  type: "string",
-                  description: "First name of the registrant",
-                },
-                last_name: {
-                  type: "string",
-                  description: "Last name of the registrant",
-                },
-              },
-            },
-            error: {
+            id: {
               type: "string",
-              description: "Error message if registration failed",
+              description: "Registration ID",
+            },
+            meeting_id: {
+              type: "string",
+              description: "Meeting ID",
+            },
+            topic: {
+              type: "string",
+              description: "Meeting topic",
+            },
+            create_time: {
+              type: "string",
+              format: "date-time",
+              description: "Registration creation time",
+            },
+            status: {
+              type: "string",
+              enum: ["approved", "pending", "denied"],
+              description: "Registration status",
+            },
+            join_url: {
+              type: "string",
+              format: "uri",
+              description: "Join URL for the meeting",
+            },
+            email: {
+              type: "string",
+              format: "email",
+              description: "Participant email",
+            },
+            first_name: {
+              type: "string",
+              description: "Participant first name",
+            },
+            last_name: {
+              type: "string",
+              description: "Participant last name",
             },
           },
         },
@@ -241,11 +231,11 @@ const options: swaggerJsdoc.Options = {
           properties: {
             success: {
               type: "boolean",
-              description: "Always false for error responses",
+              description: "Success status",
             },
             error: {
               type: "string",
-              description: "Error message describing what went wrong",
+              description: "Error message",
             },
           },
         },
@@ -265,6 +255,27 @@ const options: swaggerJsdoc.Options = {
               format: "date-time",
               description: "Current timestamp",
             },
+          },
+        },
+        AccountParameter: {
+          type: "object",
+          properties: {
+            account: {
+              type: "string",
+              description: "Name of the Zoom account to use (defaults to the configured default account)",
+              example: "account2",
+            },
+          },
+        },
+      },
+      parameters: {
+        accountParameter: {
+          name: "account",
+          in: "query",
+          description: "Name of the Zoom account to use (defaults to the configured default account)",
+          required: false,
+          schema: {
+            type: "string",
           },
         },
       },

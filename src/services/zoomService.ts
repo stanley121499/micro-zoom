@@ -9,7 +9,8 @@ import {
   ZoomErrorResponse,
   ServiceResponse,
   ZoomBatchRegistrationRequest,
-  ZoomBatchRegistrationResponse
+  ZoomBatchRegistrationResponse,
+  ZoomAccountConfig
 } from "../interfaces/ZoomInterfaces";
 
 /**
@@ -22,11 +23,30 @@ class ZoomService {
   private readonly baseUrl = "https://api.zoom.us/v2";
   
   /**
+   * Get Zoom account configuration
+   * @param accountName - Name of the Zoom account to use
+   * @returns Zoom account configuration
+   */
+  private getAccountConfig(accountName?: string): ZoomAccountConfig {
+    const account = accountName || config.zoom.defaultAccount;
+    const accountConfig = config.zoom.accounts[account];
+    
+    if (!accountConfig) {
+      throw new Error(`Zoom account '${account}' not found`);
+    }
+    
+    return accountConfig;
+  }
+  
+  /**
    * Generate access token for Zoom API authentication
+   * @param accountName - Name of the Zoom account to use
    * @returns Access token for API authentication
    */
-  private async getAccessToken(): Promise<string> {
+  private async getAccessToken(accountName?: string): Promise<string> {
     try {
+      const accountConfig = this.getAccountConfig(accountName);
+      
       // Using Server-to-Server OAuth for authentication
       const response = await axios.post(
         "https://zoom.us/oauth/token",
@@ -34,10 +54,10 @@ class ZoomService {
         {
           params: {
             grant_type: "account_credentials",
-            account_id: config.zoom.accountId,
+            account_id: accountConfig.accountId,
           },
           headers: {
-            Authorization: `Basic ${Buffer.from(config.zoom.clientId + ":" + config.zoom.clientSecret).toString("base64")}`,
+            Authorization: `Basic ${Buffer.from(accountConfig.clientId + ":" + accountConfig.clientSecret).toString("base64")}`,
             "Content-Type": "application/json",
           },
         }
@@ -54,15 +74,17 @@ class ZoomService {
    * Register a participant for a Zoom meeting
    * @param meetingId - The Zoom meeting ID
    * @param registrationData - Participant registration information
+   * @param accountName - Name of the Zoom account to use
    * @returns ServiceResponse with registration result
    */
   public async registerParticipant(
     meetingId: string, 
-    registrationData: ZoomRegistrationRequest
+    registrationData: ZoomRegistrationRequest,
+    accountName?: string
   ): Promise<ServiceResponse<ZoomRegistrationResponse>> {
     try {
       // Get access token
-      const accessToken = await this.getAccessToken();
+      const accessToken = await this.getAccessToken(accountName);
       
       // Make request to Zoom API
       const response = await axios.post(
@@ -106,15 +128,17 @@ class ZoomService {
    * Register a participant for a Zoom webinar
    * @param webinarId - The Zoom webinar ID
    * @param registrationData - Participant registration information
+   * @param accountName - Name of the Zoom account to use
    * @returns ServiceResponse with registration result
    */
   public async registerWebinarParticipant(
     webinarId: string, 
-    registrationData: ZoomRegistrationRequest
+    registrationData: ZoomRegistrationRequest,
+    accountName?: string
   ): Promise<ServiceResponse<ZoomRegistrationResponse>> {
     try {
       // Get access token
-      const accessToken = await this.getAccessToken();
+      const accessToken = await this.getAccessToken(accountName);
       
       // Make request to Zoom API
       const response = await axios.post(

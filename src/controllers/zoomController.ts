@@ -17,6 +17,7 @@ class ZoomController {
   public async registerForMeeting(req: Request, res: Response): Promise<void> {
     try {
       const meetingId = req.params.meetingId;
+      const accountName = req.query.account as string | undefined;
       
       // Validate meeting ID
       if (!meetingId) {
@@ -40,7 +41,7 @@ class ZoomController {
       }
       
       // Call service to register participant
-      const result = await zoomService.registerParticipant(meetingId, registrationData);
+      const result = await zoomService.registerParticipant(meetingId, registrationData, accountName);
       
       // Return response based on service result
       res.status(result.statusCode).json({
@@ -65,6 +66,7 @@ class ZoomController {
   public async registerForWebinar(req: Request, res: Response): Promise<void> {
     try {
       const webinarId = req.params.webinarId;
+      const accountName = req.query.account as string | undefined;
       
       // Validate webinar ID
       if (!webinarId) {
@@ -88,7 +90,7 @@ class ZoomController {
       }
       
       // Call service to register participant
-      const result = await zoomService.registerWebinarParticipant(webinarId, registrationData);
+      const result = await zoomService.registerWebinarParticipant(webinarId, registrationData, accountName);
       
       // Return response based on service result
       res.status(result.statusCode).json({

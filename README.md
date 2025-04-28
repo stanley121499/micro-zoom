@@ -7,6 +7,7 @@ A Node.js TypeScript microservice for handling API requests to register particip
 - Register participants for Zoom meetings
 - Register participants for Zoom webinars
 - Batch registration of multiple participants
+- Support for multiple Zoom accounts
 - Environment-based configuration
 - TypeScript for type safety
 - Express.js for API handling
@@ -32,17 +33,51 @@ A Node.js TypeScript microservice for handling API requests to register particip
    npm install
    ```
 
-3. Create a `.env` file in the root directory based on the provided example:
+3. Create a `.env` file in the root directory with the following structure:
    ```
+   # Server Configuration
    PORT=3000
    NODE_ENV=development
-   ZOOM_ACCOUNT_ID=your_zoom_account_id
-   ZOOM_CLIENT_ID=your_zoom_client_id
-   ZOOM_CLIENT_SECRET=your_zoom_client_secret
    JWT_SECRET=your_jwt_secret
+
+   # Default Zoom Account
+   ZOOM_CLIENT_ID=your_default_zoom_client_id
+   ZOOM_CLIENT_SECRET=your_default_zoom_client_secret
+   ZOOM_ACCOUNT_ID=your_default_zoom_account_id
+   ZOOM_DEFAULT_ACCOUNT=default
+
+   # Additional Zoom Accounts (optional)
+   ZOOM_ACCOUNT2_CLIENT_ID=your_second_zoom_client_id
+   ZOOM_ACCOUNT2_CLIENT_SECRET=your_second_zoom_client_secret
+   ZOOM_ACCOUNT2_ACCOUNT_ID=your_second_zoom_account_id
+
+   # Google Sheets Configuration (if using)
+   GOOGLE_SHEETS_CLIENT_EMAIL=your_google_sheets_client_email
+   GOOGLE_SHEETS_PRIVATE_KEY=your_google_sheets_private_key
+   GOOGLE_SHEETS_SPREADSHEET_ID=your_google_sheets_spreadsheet_id
    ```
 
-4. Build the application:
+4. Configure Zoom Accounts:
+   - The default account will be used if no account is specified in the API request
+   - To add more accounts, uncomment and modify the account configuration in `src/config/config.ts`:
+   ```typescript
+   accounts: {
+     default: {
+       name: "default",
+       clientId: process.env.ZOOM_CLIENT_ID || "",
+       clientSecret: process.env.ZOOM_CLIENT_SECRET || "",
+       accountId: process.env.ZOOM_ACCOUNT_ID || "",
+     },
+     account2: {
+       name: "account2",
+       clientId: process.env.ZOOM_ACCOUNT2_CLIENT_ID || "",
+       clientSecret: process.env.ZOOM_ACCOUNT2_CLIENT_SECRET || "",
+       accountId: process.env.ZOOM_ACCOUNT2_ACCOUNT_ID || "",
+     },
+   }
+   ```
+
+5. Build the application:
    ```bash
    npm run build
    ```
@@ -102,15 +137,15 @@ GET /health
 ### Single Registration
 
 ```
-POST /api/zoom/meetings/:meetingId/register
-POST /api/zoom/webinars/:webinarId/register
+POST /api/zoom/meetings/:meetingId/register?account=account_name
+POST /api/zoom/webinars/:webinarId/register?account=account_name
 ```
 
 ### Batch Registration
 
 ```
-POST /api/zoom/meetings/:meetingId/batch-register
-POST /api/zoom/webinars/:webinarId/batch-register
+POST /api/zoom/meetings/:meetingId/batch-register?account=account_name
+POST /api/zoom/webinars/:webinarId/batch-register?account=account_name
 ```
 
 ## Example Requests
@@ -153,56 +188,46 @@ POST /api/zoom/webinars/:webinarId/batch-register
 }
 ```
 
-## Response Examples
+## Using Multiple Zoom Accounts
 
-### Success Response
+The API supports multiple Zoom accounts through the `account` query parameter. If not specified, it will use the default account configured in the environment variables.
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "abc123",
-    "meeting_id": "123456789",
-    "topic": "Example Meeting",
-    "create_time": "2023-06-01T12:00:00Z",
-    "status": "approved",
-    "join_url": "https://zoom.us/j/123456789?pwd=abc123",
-    "email": "participant@example.com",
-    "first_name": "John",
-    "last_name": "Doe"
-  }
-}
+### Examples
+
+1. Using the default account:
+```
+POST /api/zoom/meetings/123456789/register
 ```
 
-### Batch Response
-
-```json
-{
-  "success": true,
-  "data": {
-    "registrants": [
-      {
-        "result": { /* registration data */ },
-        "email": "participant1@example.com"
-      },
-      {
-        "result": null,
-        "error": "Invalid email format",
-        "email": "participant2@example.com"
-      }
-    ],
-    "successful_count": 1,
-    "failed_count": 1
-  }
-}
+2. Using a specific account:
+```
+POST /api/zoom/meetings/123456789/register?account=account2
 ```
 
-### Error Response
+### Account Configuration
 
-```json
-{
-  "success": false,
-  "error": "Error message"
+1. Add environment variables for each additional account:
+```
+ZOOM_ACCOUNT2_CLIENT_ID=your_client_id
+ZOOM_ACCOUNT2_CLIENT_SECRET=your_client_secret
+ZOOM_ACCOUNT2_ACCOUNT_ID=your_account_id
+```
+
+2. Update the config file to include the new account:
+```typescript
+accounts: {
+  default: {
+    name: "default",
+    clientId: process.env.ZOOM_CLIENT_ID || "",
+    clientSecret: process.env.ZOOM_CLIENT_SECRET || "",
+    accountId: process.env.ZOOM_ACCOUNT_ID || "",
+  },
+  account2: {
+    name: "account2",
+    clientId: process.env.ZOOM_ACCOUNT2_CLIENT_ID || "",
+    clientSecret: process.env.ZOOM_ACCOUNT2_CLIENT_SECRET || "",
+    accountId: process.env.ZOOM_ACCOUNT2_ACCOUNT_ID || "",
+  },
 }
 ```
 

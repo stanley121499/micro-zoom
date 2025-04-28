@@ -3,6 +3,20 @@
  */
 
 /**
+ * Zoom account configuration interface
+ */
+export interface ZoomAccountConfig {
+  /** The name of the Zoom account */
+  name: string;
+  /** The client ID for the Zoom account */
+  clientId: string;
+  /** The client secret for the Zoom account */
+  clientSecret: string;
+  /** The account ID for the Zoom account */
+  accountId: string;
+}
+
+/**
  * Person registration request interface
  */
 export interface ZoomRegistrationRequest {

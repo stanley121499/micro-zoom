@@ -20,6 +20,12 @@ const router = Router();
  *         schema:
  *           type: string
  *         description: The Zoom meeting ID
+ *       - in: query
+ *         name: account
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Name of the Zoom account to use (defaults to the configured default account)
  *     requestBody:
  *       required: true
  *       content:
@@ -68,6 +74,12 @@ router.post("/meetings/:meetingId/register", zoomController.registerForMeeting);
  *         schema:
  *           type: string
  *         description: The Zoom webinar ID
+ *       - in: query
+ *         name: account
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Name of the Zoom account to use (defaults to the configured default account)
  *     requestBody:
  *       required: true
  *       content:

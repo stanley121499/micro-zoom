@@ -2,6 +2,7 @@
  * Configuration module for application settings
  */
 import dotenv from "dotenv";
+import { ZoomAccountConfig } from "../interfaces/ZoomInterfaces";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -17,12 +18,24 @@ const config = {
   
   /** Zoom API credentials */
   zoom: {
-    /** Zoom client ID */
-    clientId: process.env.ZOOM_CLIENT_ID || "",
-    /** Zoom client secret */
-    clientSecret: process.env.ZOOM_CLIENT_SECRET || "",
-    /** Zoom account ID */
-    accountId: process.env.ZOOM_ACCOUNT_ID || "",
+    /** Default Zoom account to use if none specified */
+    defaultAccount: process.env.ZOOM_DEFAULT_ACCOUNT || "jason",
+    /** Map of Zoom account configurations */
+    accounts: {
+      jason: {
+        name: "jason",
+        clientId: process.env.ZOOM_CLIENT_ID || "",
+        clientSecret: process.env.ZOOM_CLIENT_SECRET || "",
+        accountId: process.env.ZOOM_ACCOUNT_ID || "",
+      },
+      // Add more accounts here as needed
+      cae: {
+        name: "cae",
+        clientId: process.env.ZOOM_ACCOUNT2_CLIENT_ID || "",
+        clientSecret: process.env.ZOOM_ACCOUNT2_CLIENT_SECRET || "",
+        accountId: process.env.ZOOM_ACCOUNT2_ACCOUNT_ID || "",
+      },
+    } as Record<string, ZoomAccountConfig>,
   },
   
   /** JWT configuration */
