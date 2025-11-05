@@ -34,7 +34,7 @@ const config = {
         clientId: process.env.ZOOM_ACCOUNT2_CLIENT_ID || "",
         clientSecret: process.env.ZOOM_ACCOUNT2_CLIENT_SECRET || "",
         accountId: process.env.ZOOM_ACCOUNT2_ACCOUNT_ID || "",
-      } // Add more accounts here as needed
+      }, // Add more accounts here as needed
       kaelyn: {
         name: "kaelyn",
         clientId: process.env.ZOOM_ACCOUNT3_CLIENT_ID || "",
